@@ -1,0 +1,55 @@
+from google.colab import drive
+drive.mount('/content/gdrive')
+import sys
+import os
+import math
+from math import log
+import numpy as np
+import scipy as sp
+from PIL import Image
+import matplotlib.pyplot as plt
+
+#root = file path to data
+root = "/content/gdrive/MyDrive/dataSample"
+
+def convertAndSave(array, name):
+  print ('Processing ' + name)
+  if array.shape[1]!=16:
+    assert(False)
+
+  b = int((array.shape[0]*16)**(0.5))
+  b = 2 ** (int(log (b) / log (2))+1)
+  a = int(array.shape[0] * (16) / b)
+
+  array = array[:a*b//16,:]
+  array = np.reshape(array, (a,b))
+  
+  #Convert to image
+  im = Image.fromarray(np.uint8(array))
+  im.save(root + '\\' + name + '.PNG', "PNG")
+  return im
+
+#Get list of files
+files = os.listdir(root)
+
+print('files : ',files)
+
+#Process files
+for counter, name in enumerate(files):
+  if '.bytes' != name[-6:]:
+    continue
+  #open file
+  f = open(root + '/' + name)
+
+  array = []
+  for line in f:
+    xx = line.split()
+    if len(xx) != 17:
+      continue
+    #Append file to array
+    array.append([int(i, 16) if i != "??" else 0 for i in xx[1:] ])
+  #Convert files in array
+  plt.imshow(convertAndSave(np.array(array), name))
+  del array
+  #Close file
+  f.close() 
