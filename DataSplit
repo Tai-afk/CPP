@@ -1,0 +1,27 @@
+from google.colab import drive
+drive.mount('/content/gdrive')
+import sys
+import os
+import math
+from math import log
+import numpy as np
+import scipy as sp
+from PIL import Image
+import matplotlib.pyplot as plt
+import zipfile
+
+#!unzip "/content/gdrive/MyDrive/malimg_paper_dataset_imgs"
+
+!unzip "/content/gdrive/MyDrive/malimg_dataset.zip"
+path_root = "/content/malimg_paper_dataset_imgs"
+from keras.preprocessing.image import ImageDataGenerator
+#Defining the dimmensions of how I want to quantify the data, convert the images to dimmensions, and quantifying batch size.
+#setting up into 2D dimmensions, setting up dimmension so model go through it by set
+batches = ImageDataGenerator().flow_from_directory(directory = path_root, target_size=(64,64), batch_size=10000)
+
+imgs, labels = next(batches)
+
+from sklearn.model_selection import train_test_split
+#Training data -> allow model to get familiar with data
+#Testing data -> has to classify the data at an accuracy rate
+X_train, X_test, y_train, y_test = train_test_split(imgs/255, labels, test_size=0.3)
