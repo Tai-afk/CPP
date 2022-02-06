@@ -1,0 +1,14 @@
+from numpy import argmax
+from sklearn.utils import class_weight
+
+y_train.shape
+y_train_new = argmax(y_train, axis=1)
+
+class_weights = class_weight.compute_class_weight(class_weight ='balanced', 
+                                                  classes = np.unique(y_train_new), 
+                                                  y = y_train_new)
+class_weights = {i : class_weights[i] for i in range(len(class_weights))}
+
+Malware_model.fit(X_train, y_train, validation_data=(X_test,y_test), epochs=10, class_weight=class_weights)
+scores = Malware_model.evaluate(X_test,y_test)
+print("Final CNN accuracy", scores[1])
